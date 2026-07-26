@@ -1,28 +1,37 @@
-# ANKER – Stabilisationsachse · iki1uc
+# 81.tmp · iki1uc · Daten-Pool
 
 ## Zweck
-ANKER ist die Stabilisationsachse des iki1uc‑Systems.
-Es hält die Achsen IQ, QI, EVO, UPD, UPG, BIOS und CALC im korrekten Verhältnis.
+81.tmp ist der zentrale Daten-Pool des iki1uc-Systems.  
+Er verbindet alle Orte über **NC.link** und liefert Daten an:
+
+- TMP (Kern)
+- HDF (Resolver)
+- SLIDE (Grafik)
+- VECTOR (Moleküle)
+- ALL (Hyperraum)
+- SEND (Pipeline)
+- MOVE (Routing)
+- ANKER (Bindung)
+- KI (Operatoren)
+- UNI (Sprache)
+- WELT (Portal)
+
+## Datenquellen
+Nur drei Quellen dürfen 81.tmp füttern:
+
+1. **TMP.respo** – Achsen, Sequenzen, 6D-Kern  
+2. **HDF/** – room-Dateien, Moleküle, Speicherblöcke  
+3. **VECTOR/** – Zeichen-Moleküle
 
 ## Struktur
-- NAME: ANKER
-- ID: A01
-- Station: S01
-- Dimension: D4
-- Modus: erabel (neutral, operation möglich)
+- 81.room  
+- 9.room  
+- COMMANDS.room  
+- one.room  
+- Molekül-Ordner (i/o/d/l/r/u/x/y)  
+- Speicherblöcke (128/256/512/768)  
+- tmp.hdf.resolver.js  
 
-## Rolle
-ANKER stabilisiert, ohne selbst aktiv zu berechnen oder zu steuern.
-Es ist die neutrale Achse zwischen AXI, 6d und API.
+## NC.link
+Alle Orte werden über NC.link adressiert:
 
-## Bindungen
-- AXI
-- 6d
-- 360
-- 100
-- 213 (REAL)
-- API
-
-## Status
-STATE = STABIL  
-READY = 100%
