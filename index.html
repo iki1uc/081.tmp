@@ -2,126 +2,113 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>81.tmp · iki1uc</title>
+<title>ULTRA‑PLATINE · iki1uc</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body { background:#000; color:#0f0; font-family:Consolas; padding:20px; }
-h1 { color:#ff00ff; text-shadow:0 0 10px #ff00ff; }
-
-/* Grundblock */
-.block {
-    background:#111;
-    padding:15px;
-    border-left:4px solid #ff00ff;
-    margin-bottom:20px;
-    cursor:pointer;
-
-    /* Slide-In */
-    position: relative;
-    left: -40px;
-    opacity: 0;
-    transition: all 0.6s ease;
-}
-.block.active {
-    left: 0;
-    opacity: 1;
-}
-
-/* Flip-Flop */
-.block.flip {
-    transform: rotateY(180deg);
-    transition: transform 0.6s ease;
-    transform-style: preserve-3d;
-}
-
-/* ASCII Rotation */
-pre {
-    background:#000;
-    padding:12px;
-    border-left:3px solid #00e0ff;
-    display:inline-block;
-    transition: transform 0.8s ease;
-}
-pre.rotate {
-    transform: rotateX(180deg);
-}
+body { background:#000; color:#0f0; font-family:monospace; padding:40px; }
+h1 { color:#0f0; letter-spacing:4px; margin-bottom:30px; }
+.block { background:#111; border:1px solid #333; padding:25px; margin-bottom:30px; border-radius:8px; }
+.title { font-size:22px; color:#6cf; margin-bottom:10px; }
+pre { background:#000; border-left:3px solid #6cf; padding:15px; margin-top:10px; white-space:pre-wrap; }
+button { padding:10px 20px; background:#6cf; border:none; cursor:pointer; margin-top:10px; }
+button:hover { background:#9ef; }
 </style>
 
-<script type="module" src="../VECTOR/VECTOR.81.js"></script>
-<script type="module" src="../SLIDE/full.js"></script>
-<script type="module" src="../SEND/SEND.core.js"></script>
-<script type="module" src="../MOVE/MOVE.core.js"></script>
-<script type="module" src="./tmp.hdf.resolver.js"></script>
+<script type="module">
+import { ELECTRO_PLATINE } from "./electro-platine.js";
+import { TMP_GLOBAL } from "./tmp.global.js";
+import { OWNER_AVATAR } from "./owner-avatar.js";
+import { LIVE_BRIDGE_CONNECT } from "../LIVE-BRIDGE/live-core-lage.js";
+import { WLOCH } from "../WLOCH/WLOCH.js";
+import { GATE } from "./GATE.js";
+import { EXPORT_OUTPUT } from "./EXPORT.js";
+
+window.addEventListener("load", async () => {
+
+  /* -----------------------------------------
+     1. LIVE‑BRIDGE Pulse aktivieren
+  ----------------------------------------- */
+  LIVE_BRIDGE_CONNECT();
+
+  /* -----------------------------------------
+     2. 81.tmp globalen Cache laden
+  ----------------------------------------- */
+  await TMP_GLOBAL.loadAll();
+  document.getElementById("cacheOut").innerText =
+    JSON.stringify(TMP_GLOBAL.export(), null, 2);
+
+  /* -----------------------------------------
+     3. Owner‑Avatar Kernel starten
+  ----------------------------------------- */
+  await OWNER_AVATAR.init();
+  document.getElementById("avatarOut").innerText =
+    JSON.stringify(OWNER_AVATAR.cache, null, 2);
+
+  /* -----------------------------------------
+     4. GATE Achsen visualisieren
+  ----------------------------------------- */
+  const axis = GATE.axis();
+  document.getElementById("gateOut").innerText =
+    JSON.stringify(axis, null, 2);
+
+  /* -----------------------------------------
+     5. WLOCH Stabilisation anwenden
+  ----------------------------------------- */
+  const stable = WLOCH.stabilise({ axis });
+  document.getElementById("wlochOut").innerText =
+    JSON.stringify(stable, null, 2);
+
+  /* -----------------------------------------
+     6. EXPORT Output erzeugen
+  ----------------------------------------- */
+  const out = EXPORT_OUTPUT();
+  document.getElementById("exportOut").innerText =
+    JSON.stringify(out, null, 2);
+
+  /* -----------------------------------------
+     7. Elektro‑Platine Gesamtstatus
+  ----------------------------------------- */
+  const platine = await ELECTRO_PLATINE();
+  document.getElementById("platineOut").innerText =
+    JSON.stringify(platine, null, 2);
+});
+</script>
 
 </head>
-
 <body>
 
-<h1>81.tmp · Daten-Pool</h1>
+<h1>ULTRA‑PLATINE · iki1uc</h1>
 
-<!-- 81.room -->
-<div class="block" id="block81" onclick="flipFlop('block81'); asciiFlip('room81');">
-    <h2>81.room</h2>
-    <pre id="room81"></pre>
+<div class="block">
+  <div class="title">81.tmp – Globaler Cache</div>
+  <pre id="cacheOut">Lade Cache…</pre>
 </div>
 
-<!-- 9.room -->
-<div class="block" id="block9" onclick="flipFlop('block9'); asciiFlip('room9');">
-    <h2>9.room</h2>
-    <pre id="room9"></pre>
+<div class="block">
+  <div class="title">Owner‑Avatar – Kernel</div>
+  <pre id="avatarOut">Initialisiere Kernel…</pre>
 </div>
 
-<!-- COMMANDS.room -->
-<div class="block" id="blockCommands" onclick="flipFlop('blockCommands'); asciiFlip('commands');">
-    <h2>COMMANDS.room</h2>
-    <pre id="commands"></pre>
+<div class="block">
+  <div class="title">GATE – Achsen</div>
+  <pre id="gateOut">Lade Achsen…</pre>
 </div>
 
-<!-- one.room -->
-<div class="block" id="blockOne" onclick="flipFlop('blockOne'); asciiFlip('one');">
-    <h2>one.room</h2>
-    <pre id="one"></pre>
+<div class="block">
+  <div class="title">WLOCH – Stabilisation</div>
+  <pre id="wlochOut">Stabilisiere…</pre>
 </div>
 
-<script>
-/* Flip-Flop */
-function flipFlop(id) {
-    document.getElementById(id).classList.toggle("flip");
-}
+<div class="block">
+  <div class="title">EXPORT – Output</div>
+  <pre id="exportOut">Erzeuge Output…</pre>
+</div>
 
-/* ASCII Rotation */
-function asciiFlip(id) {
-    document.getElementById(id).classList.toggle("rotate");
-}
-
-/* Slide-In für alle Blöcke */
-function activateBlocks() {
-    document.querySelectorAll('.block').forEach((b, i) => {
-        setTimeout(() => b.classList.add('active'), 150 * i);
-    });
-}
-
-/* TMP + HDF RESPO + NC.link */
-(async function () {
-
-    const resolver = window.TMP_HDF_RESOLVER;
-
-    document.getElementById("room81").innerText =
-        await fetch("81.room").then(r => r.text());
-
-    document.getElementById("room9").innerText =
-        await fetch("9.room").then(r => r.text());
-
-    document.getElementById("commands").innerText =
-        await fetch("COMMANDS.room").then(r => r.text());
-
-    document.getElementById("one").innerText =
-        await fetch("one.room").then(r => r.text());
-
-    activateBlocks();
-
-})();
-</script>
+<div class="block">
+  <div class="title">ELEKTRO‑PLATINE – Gesamtstatus</div>
+  <pre id="platineOut">Starte System…</pre>
+</div>
 
 </body>
 </html>
