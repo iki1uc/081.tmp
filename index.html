@@ -1,114 +1,82 @@
 <!DOCTYPE html>
-<html lang="de">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>ULTRA‑PLATINE · iki1uc</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<title>iki1uc · PLATINE</title>
 <style>
-body { background:#000; color:#0f0; font-family:monospace; padding:40px; }
-h1 { color:#0f0; letter-spacing:4px; margin-bottom:30px; }
-.block { background:#111; border:1px solid #333; padding:25px; margin-bottom:30px; border-radius:8px; }
-.title { font-size:22px; color:#6cf; margin-bottom:10px; }
-pre { background:#000; border-left:3px solid #6cf; padding:15px; margin-top:10px; white-space:pre-wrap; }
-button { padding:10px 20px; background:#6cf; border:none; cursor:pointer; margin-top:10px; }
-button:hover { background:#9ef; }
+body { background:#000; margin:0; overflow:hidden; }
+canvas { display:block; }
 </style>
-
-<script type="module">
-import { ELECTRO_PLATINE } from "./electro-platine.js";
-import { TMP_GLOBAL } from "./tmp.global.js";
-import { OWNER_AVATAR } from "./owner-avatar.js";
-import { LIVE_BRIDGE_CONNECT } from "../LIVE-BRIDGE/live-core-lage.js";
-import { WLOCH } from "../WLOCH/WLOCH.js";
-import { GATE } from "./GATE.js";
-import { EXPORT_OUTPUT } from "./EXPORT.js";
-
-window.addEventListener("load", async () => {
-
-  /* -----------------------------------------
-     1. LIVE‑BRIDGE Pulse aktivieren
-  ----------------------------------------- */
-  LIVE_BRIDGE_CONNECT();
-
-  /* -----------------------------------------
-     2. 81.tmp globalen Cache laden
-  ----------------------------------------- */
-  await TMP_GLOBAL.loadAll();
-  document.getElementById("cacheOut").innerText =
-    JSON.stringify(TMP_GLOBAL.export(), null, 2);
-
-  /* -----------------------------------------
-     3. Owner‑Avatar Kernel starten
-  ----------------------------------------- */
-  await OWNER_AVATAR.init();
-  document.getElementById("avatarOut").innerText =
-    JSON.stringify(OWNER_AVATAR.cache, null, 2);
-
-  /* -----------------------------------------
-     4. GATE Achsen visualisieren
-  ----------------------------------------- */
-  const axis = GATE.axis();
-  document.getElementById("gateOut").innerText =
-    JSON.stringify(axis, null, 2);
-
-  /* -----------------------------------------
-     5. WLOCH Stabilisation anwenden
-  ----------------------------------------- */
-  const stable = WLOCH.stabilise({ axis });
-  document.getElementById("wlochOut").innerText =
-    JSON.stringify(stable, null, 2);
-
-  /* -----------------------------------------
-     6. EXPORT Output erzeugen
-  ----------------------------------------- */
-  const out = EXPORT_OUTPUT();
-  document.getElementById("exportOut").innerText =
-    JSON.stringify(out, null, 2);
-
-  /* -----------------------------------------
-     7. Elektro‑Platine Gesamtstatus
-  ----------------------------------------- */
-  const platine = await ELECTRO_PLATINE();
-  document.getElementById("platineOut").innerText =
-    JSON.stringify(platine, null, 2);
-});
-</script>
-
 </head>
 <body>
+<canvas id="board"></canvas>
 
-<h1>ULTRA‑PLATINE · iki1uc</h1>
+<script>
+const c = document.getElementById("board");
+const ctx = c.getContext("2d");
+c.width = window.innerWidth;
+c.height = window.innerHeight;
 
-<div class="block">
-  <div class="title">81.tmp – Globaler Cache</div>
-  <pre id="cacheOut">Lade Cache…</pre>
-</div>
+const modules = [
+  { name:"81.tmp", x:200, y:200, color:"#0f0" },
+  { name:"LIVE-BRIDGE", x:600, y:150, color:"#6cf" },
+  { name:"Owner-Avatar", x:900, y:300, color:"#f0f" },
+  { name:"GATE", x:400, y:400, color:"#ff0" },
+  { name:"EXPORT", x:800, y:500, color:"#f60" },
+  { name:"WLOCH", x:300, y:550, color:"#09f" }
+];
 
-<div class="block">
-  <div class="title">Owner‑Avatar – Kernel</div>
-  <pre id="avatarOut">Initialisiere Kernel…</pre>
-</div>
+function drawChip(m){
+  ctx.fillStyle = m.color;
+  ctx.fillRect(m.x-60, m.y-30, 120, 60);
+  ctx.fillStyle="#000";
+  ctx.font="16px monospace";
+  ctx.fillText(m.name, m.x-50, m.y+5);
+}
 
-<div class="block">
-  <div class="title">GATE – Achsen</div>
-  <pre id="gateOut">Lade Achsen…</pre>
-</div>
+function drawWire(a,b){
+  ctx.strokeStyle="#0f0";
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.stroke();
+}
 
-<div class="block">
-  <div class="title">WLOCH – Stabilisation</div>
-  <pre id="wlochOut">Stabilisiere…</pre>
-</div>
+function animatePulse(a,b,t){
+  const x = a.x + (b.x - a.x) * t;
+  const y = a.y + (b.y - a.y) * t;
+  ctx.fillStyle="#fff";
+  ctx.beginPath();
+  ctx.arc(x,y,5,0,Math.PI*2);
+  ctx.fill();
+}
 
-<div class="block">
-  <div class="title">EXPORT – Output</div>
-  <pre id="exportOut">Erzeuge Output…</pre>
-</div>
+let t=0;
+function loop(){
+  ctx.clearRect(0,0,c.width,c.height);
 
-<div class="block">
-  <div class="title">ELEKTRO‑PLATINE – Gesamtstatus</div>
-  <pre id="platineOut">Starte System…</pre>
-</div>
+  modules.forEach(drawChip);
 
+  drawWire(modules[1], modules[0]); // LIVE-BRIDGE → 81.tmp
+  drawWire(modules[0], modules[2]); // 81.tmp → Owner-Avatar
+  drawWire(modules[0], modules[3]); // 81.tmp → GATE
+  drawWire(modules[3], modules[5]); // GATE → WLOCH
+  drawWire(modules[5], modules[4]); // WLOCH → EXPORT
+
+  animatePulse(modules[1], modules[0], t);
+  animatePulse(modules[0], modules[2], t);
+  animatePulse(modules[0], modules[3], t);
+  animatePulse(modules[3], modules[5], t);
+  animatePulse(modules[5], modules[4], t);
+
+  t += 0.01;
+  if(t>1) t=0;
+
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
 </body>
 </html>
