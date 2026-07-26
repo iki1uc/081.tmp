@@ -1,0 +1,29 @@
+import { TMP_GLOBAL } from "../81.tmp/tmp.global.js";
+import { OWNER_AVATAR } from "../81.tmp/owner-avatar.js";
+import { LIVE_BRIDGE_CONNECT } from "../LIVE-BRIDGE/live-core-lage.js";
+
+export async function ELECTRO_PLATINE() {
+  // 1. LIVE‑BRIDGE sendet Pulse
+  const pulse = { source: "LIVE-BRIDGE", voltage: 5, time: Date.now() };
+  LIVE_BRIDGE_CONNECT();
+
+  // 2. 81.tmp empfängt Pulse
+  TMP_GLOBAL.connectPulse(pulse);
+  await TMP_GLOBAL.loadAll();
+
+  // 3. Owner‑Avatar nutzt Cache
+  await OWNER_AVATAR.init();
+
+  // 4. GATE liest Achsen
+  const axis = Object.keys(TMP_GLOBAL.cache).filter(f => f.includes(".room"));
+
+  // 5. EXPORT schreibt Output
+  const output = TMP_GLOBAL.export();
+
+  return {
+    pulse,
+    axis,
+    output,
+    status: "PLATINE‑AKTIV"
+  };
+}
