@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MOVE · ANKER · Stabilisation</title>
+
+<style>
+body { background:#000; color:#0f0; font-family:monospace; padding:40px; }
+h1 { color:#6cf; text-align:center; }
+#geo {
+    width: 360px; height: 360px;
+    margin: 40px auto;
+    border: 3px solid #6cf;
+    border-radius: 50%;
+    position: relative;
+    animation: spin 10s linear infinite;
+}
+.dot {
+    width: 12px; height: 12px;
+    background:#0f0; border-radius:50%;
+    position:absolute;
+}
+pre {
+    background:#111; padding:20px; border-left:3px solid #6cf;
+}
+@keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+</style>
+
+<script src="ANKER.core.js"></script>
+<script src="MOVE.core.js"></script>
+
+</head>
+
+<body>
+
+<h1>MOVE · ANKER · Stabilisationsachse</h1>
+
+<div id="geo"></div>
+<pre id="status">Lade MOVE…</pre>
+
+<script>
+const geo = document.getElementById("geo");
+const count = 81;
+const radius = 160;
+
+for(let i=0; i<count; i++){
+    const dot = document.createElement("div");
+    dot.className = "dot";
+
+    const angle = (i / count) * Math.PI * 2;
+    const x = Math.cos(angle) * radius + 180 - 6;
+    const y = Math.sin(angle) * radius + 180 - 6;
+
+    dot.style.left = x + "px";
+    dot.style.top = y + "px";
+
+    geo.appendChild(dot);
+}
+
+ANKER.set(9);
+MOVE.setOrt(12);
+MOVE.setHome(3);
+MOVE.compute();
+
+document.getElementById("status").innerText =
+    JSON.stringify(MOVE.status(), null, 2);
+</script>
+
+</body>
+</html>
