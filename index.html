@@ -2,81 +2,100 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>iki1uc · PLATINE</title>
+<title>ULTRA‑VISUAL · iki1uc</title>
 <style>
 body { background:#000; margin:0; overflow:hidden; }
 canvas { display:block; }
 </style>
 </head>
 <body>
-<canvas id="board"></canvas>
 
-<script>
-const c = document.getElementById("board");
+<canvas id="ultra"></canvas>
+
+<script type="module">
+import { ULTRA_VISUAL } from "./ultra-visual-core.js";
+
+const c = document.getElementById("ultra");
 const ctx = c.getContext("2d");
 c.width = window.innerWidth;
 c.height = window.innerHeight;
 
+/* -----------------------------------------
+   MODULE POSITIONEN
+----------------------------------------- */
 const modules = [
-  { name:"81.tmp", x:200, y:200, color:"#0f0" },
-  { name:"LIVE-BRIDGE", x:600, y:150, color:"#6cf" },
-  { name:"Owner-Avatar", x:900, y:300, color:"#f0f" },
-  { name:"GATE", x:400, y:400, color:"#ff0" },
-  { name:"EXPORT", x:800, y:500, color:"#f60" },
-  { name:"WLOCH", x:300, y:550, color:"#09f" }
+  { name:"81.tmp", x:200, y:200, heat:0.8 },
+  { name:"LIVE-BRIDGE", x:600, y:150, heat:0.5 },
+  { name:"Owner-Avatar", x:900, y:300, heat:0.3 },
+  { name:"GATE", x:400, y:400, heat:0.6 },
+  { name:"EXPORT", x:800, y:500, heat:0.4 },
+  { name:"WLOCH", x:300, y:550, heat:0.7 }
 ];
 
-function drawChip(m){
-  ctx.fillStyle = m.color;
-  ctx.fillRect(m.x-60, m.y-30, 120, 60);
-  ctx.fillStyle="#000";
-  ctx.font="16px monospace";
-  ctx.fillText(m.name, m.x-50, m.y+5);
-}
+const routes = [
+  { from: modules[1], to: modules[0] },
+  { from: modules[0], to: modules[2] },
+  { from: modules[0], to: modules[3] },
+  { from: modules[3], to: modules[5] },
+  { from: modules[5], to: modules[4] }
+];
 
-function drawWire(a,b){
-  ctx.strokeStyle="#0f0";
-  ctx.lineWidth=2;
-  ctx.beginPath();
-  ctx.moveTo(a.x, a.y);
-  ctx.lineTo(b.x, b.y);
-  ctx.stroke();
-}
+const timeline = [
+  { label:"Pulse" },
+  { label:"Cache" },
+  { label:"Kernel" },
+  { label:"GATE" },
+  { label:"WLOCH" },
+  { label:"EXPORT" }
+];
 
-function animatePulse(a,b,t){
-  const x = a.x + (b.x - a.x) * t;
-  const y = a.y + (b.y - a.y) * t;
-  ctx.fillStyle="#fff";
-  ctx.beginPath();
-  ctx.arc(x,y,5,0,Math.PI*2);
-  ctx.fill();
-}
+const gates = [
+  { name:"ALPHA", x:200, y:700 },
+  { name:"BETA", x:350, y:700 },
+  { name:"GAMMA", x:500, y:700 },
+  { name:"DELTA", x:650, y:700 },
+  { name:"EPSILON", x:800, y:700 },
+  { name:"ZETA", x:950, y:700 }
+];
 
-let t=0;
+const stability = [0.2, 0.4, 0.6, 0.8, 0.7, 0.5];
+
+const flow = [
+  { label:"Cache → Kernel" },
+  { label:"Kernel → GATE" },
+  { label:"GATE → WLOCH" },
+  { label:"WLOCH → EXPORT" }
+];
+
+const brain = [
+  { name:"ID", x:200, y:900, active:true },
+  { name:"RUN8", x:350, y:900, active:false },
+  { name:"TEM", x:500, y:900, active:true },
+  { name:"AXI", x:650, y:900, active:true },
+  { name:"RESPO", x:800, y:900, active:false }
+];
+
+let t = 0;
+
 function loop(){
   ctx.clearRect(0,0,c.width,c.height);
 
-  modules.forEach(drawChip);
+  ULTRA_VISUAL.heatmap(ctx, modules);
+  ULTRA_VISUAL.routingMatrix(ctx, routes);
+  ULTRA_VISUAL.timeline(ctx, timeline);
+  ULTRA_VISUAL.gateGraph(ctx, gates);
+  ULTRA_VISUAL.wlochCurve(ctx, stability);
+  ULTRA_VISUAL.exportFlow(ctx, flow);
+  ULTRA_VISUAL.brainMap(ctx, brain);
+  ULTRA_VISUAL.pulseSequencer(ctx, t);
 
-  drawWire(modules[1], modules[0]); // LIVE-BRIDGE → 81.tmp
-  drawWire(modules[0], modules[2]); // 81.tmp → Owner-Avatar
-  drawWire(modules[0], modules[3]); // 81.tmp → GATE
-  drawWire(modules[3], modules[5]); // GATE → WLOCH
-  drawWire(modules[5], modules[4]); // WLOCH → EXPORT
-
-  animatePulse(modules[1], modules[0], t);
-  animatePulse(modules[0], modules[2], t);
-  animatePulse(modules[0], modules[3], t);
-  animatePulse(modules[3], modules[5], t);
-  animatePulse(modules[5], modules[4], t);
-
-  t += 0.01;
-  if(t>1) t=0;
+  t += 2;
 
   requestAnimationFrame(loop);
 }
 
 loop();
 </script>
+
 </body>
 </html>
