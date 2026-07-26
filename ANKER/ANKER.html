@@ -1,0 +1,23 @@
+<script src="../HH/cr/RESPO.core.js"></script>
+<script src="../HH/cr/AXI.core.js"></script>
+<script src="../HH/cr/TEM.core.js"></script>
+<script src="../HH/cr/RUN8.core.js"></script>
+
+<script>
+(async function () {
+
+    const anker = await fetch("ANKER.json").then(r => r.json()).catch(() => null);
+    const raw = await fetch("ANKER.raw").then(r => r.text()).catch(() => "");
+
+    const axi = AXI_CORE();
+    const respo = RESPO_CORE(anker || {});
+
+    document.getElementById("axis-list").innerText = raw;
+    document.getElementById("axis-status").innerText =
+        axi ? "Achsen stabil" : "Achsenfehler";
+
+    document.getElementById("respo-status").innerText =
+        `Score: ${respo.score}\nStatus: ${respo.ok ? "STABIL" : "KRITISCH"}`;
+
+})();
+</script>

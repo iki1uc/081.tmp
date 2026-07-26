@@ -1,0 +1,17 @@
+NAME = ANKER
+ID = A01
+NUMMER = 01
+STATION = S01
+DIM = D4
+
+ROLLE = Stabilisationsachse
+FUNKTION = hält IQ, QI, EVO, UPD, UPG, BIOS, CALC im Verhältnis
+
+MODUS = stabilisierend
+OP = erabel (Operation möglich, aber neutral)
+
+POSITION = D4 (Achsenebene)
+LINK = AXI + 6d + 360 + 100 + 213 + API
+
+STATUS = STABIL
+READY = 100%
