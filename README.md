@@ -35,3 +35,30 @@ Nur drei Quellen dürfen 81.tmp füttern:
 ## NC.link
 Alle Orte werden über NC.link adressiert:
 
+NC.link("ORT")
+NC.link("HOME")
+NC.link("USER")
+NC.link("WELT")
+NC.link("UNI")
+NC.link("KI")
+NC.link("SLIDE")
+NC.link("TMP")
+NC.link("HDF")
+NC.link("ROM")
+
+## Nutzung
+81.tmp wird von allen Modulen gelesen, aber nur von TMP + HDF + VECTOR geschrieben.
+
+MP → 81.tmp
+HDF → 81.tmp
+VECTOR → 81.tmp
+SLIDE ← 81.tmp
+KI ← 81.tmp
+UNI ← 81.tmp
+WELT ← 81.tmp
+
+## Status
+Bereit für Integration.
+
+Guided Link: NC_HUB_All
+
