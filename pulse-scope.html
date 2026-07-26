@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PULSE SCOPE</title>
+<style>
+body { background:#000; margin:0; overflow:hidden; }
+canvas { display:block; }
+</style>
+</head>
+<body>
+<canvas id="scope"></canvas>
+
+<script type="module">
+import { TMP_GLOBAL } from "./tmp.global.js";
+
+const c = document.getElementById("scope");
+const ctx = c.getContext("2d");
+c.width = window.innerWidth;
+c.height = window.innerHeight;
+
+let t=0;
+
+function draw(){
+  ctx.fillStyle="#000";
+  ctx.fillRect(0,0,c.width,c.height);
+
+  ctx.strokeStyle="#0f0";
+  ctx.lineWidth=2;
+  ctx.beginPath();
+
+  for(let x=0; x<c.width; x++){
+    const y = c.height/2 + Math.sin((x+t)/40)*100;
+    ctx.lineTo(x,y);
+  }
+
+  ctx.stroke();
+  t+=2;
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+</body>
+</html>
