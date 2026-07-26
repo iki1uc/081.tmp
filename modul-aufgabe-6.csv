@@ -1,0 +1,7 @@
+﻿Modul,Aufgabe,Verbindung
+81.tmp,globaler Cache,zentral
+LIVE‑BRIDGE,Pulse‑Engine,sendet Pulse an 81.tmp
+Owner‑Avatar,Kernel,nutzt Cache
+GATE,Achsen,liest Cache
+EXPORT,Output,schreibt Cache
+WLOCH,Stabilisation,speichert Status im Cache
