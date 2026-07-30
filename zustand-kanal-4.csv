@@ -1,0 +1,5 @@
+﻿Zustand,Kanal
+PQ‑Root < 100,PALAISE_RESPO
+PQ‑Root 100–199,RESPO_ARG_SCAN
+PQ‑Root 200–299,RESPO_Whirl
+PQ‑Root ≥ 300,RESPO_Whirl + NC_HUB_ALL
